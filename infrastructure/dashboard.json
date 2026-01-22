@@ -1,0 +1,51 @@
+{
+    "widgets": [
+        {
+            "type": "metric",
+            "x": 1,
+            "y": 0,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "submitIncident", { "region": "us-east-1" } ]
+                ],
+                "region": "us-east-1",
+                "period": 300
+            }
+        },
+        {
+            "type": "metric",
+            "x": 7,
+            "y": 0,
+            "width": 7,
+            "height": 6,
+            "properties": {
+                "sparkline": true,
+                "view": "singleValue",
+                "metrics": [
+                    [ "AWS/Lambda", "Errors", "FunctionName", "submitIncident", { "region": "us-east-1" } ]
+                ],
+                "region": "us-east-1",
+                "period": 300
+            }
+        },
+        {
+            "type": "metric",
+            "x": 14,
+            "y": 0,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/Lambda", "Duration", "FunctionName", "submitIncident" ]
+                ],
+                "region": "us-east-1"
+            }
+        }
+    ]
+}
