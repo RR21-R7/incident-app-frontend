@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident Reporter</title>
+    <style>
+        /* Modern Reset & Base Styles */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* The Card Container */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 450px;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover { transform: translateY(-5px); }
+
+        h2 { color: #333; margin-bottom: 1.5rem; text-align: center; }
+
+        /* Form Elements */
+        label { display: block; margin-bottom: 0.5rem; color: #555; font-weight: 600; }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 1.2rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        /* Interactive Button */
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+
+        button:hover { background: #5a6fd6; }
+        button:active { transform: scale(0.98); }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Status Messages (Hidden by default) */
+        .status-msg {
+            margin-top: 1rem;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            display: none;
+            font-weight: 500;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🚀 Report an Incident</h2>
+        <form id="incidentForm">
+            <label>📍 Location</label>
+            <input type="text" id="loc" placeholder="e.g. Block A, Level 2" required>
+            
+            <label>⚠️ Type of Incident</label>
+            <select id="type">
+                <option value="Safety">Safety Hazard</option>
+                <option value="Facility">Facility/Maintenance</option>
+                <option value="IT">IT & Network</option>
+                <option value="Security">Security Concern</option>
+            </select>
+
+            <label>📝 Description</label>
+            <textarea id="desc" rows="3" placeholder="Describe what happened..." required></textarea>
+
+            <button type="button" id="submitBtn" onclick="submitData()">Submit Report</button>
+            
+            <div id="statusMessage" class="status-msg"></div>
+        </form>
+    </div>
+
+    <script>
+        function submitData() {
+            // --- MEMBER 2: PASTE THE URL BELOW (Keep the /submit part!) ---
+            const API_ENDPOINT = "https://xl1z7nhnza.execute-api.us-east-1.amazonaws.com/dev/submit"; 
+            // -----------------------------------------------------------
+
+            const btn = document.getElementById('submitBtn');
+            const statusDiv = document.getElementById('statusMessage');
+            
+            // 1. UI Loading State
+            btn.innerHTML = "⏳ Sending...";
+            btn.disabled = true;
+            statusDiv.style.display = 'none';
+
+            const data = {
+                IncidentID: Date.now().toString(),
+                Location: document.getElementById('loc').value,
+                IncidentType: document.getElementById('type').value,
+                Description: document.getElementById('desc').value,
+                Timestamp: new Date().toISOString()
+            };
+
+            fetch(API_ENDPOINT, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if(response.ok) {
+                    // Success UI
+                    statusDiv.className = 'status-msg success';
+                    statusDiv.innerHTML = "✅ Report received! Thank you.";
+                    document.getElementById('incidentForm').reset(); // Clear form
+                } else {
+                    throw new Error("Server Error");
+                }
+            })
+            .catch(error => {
+                // Error UI
+                console.error("Error:", error);
+                statusDiv.className = 'status-msg error';
+                statusDiv.innerHTML = "❌ Failed to send. Check console.";
+            })
+            .finally(() => {
+                // Reset Button
+                btn.innerHTML = "Submit Report";
+                btn.disabled = false;
+                statusDiv.style.display = 'block';
+            });
+        }
+    </script>
+</body>
+</html>
